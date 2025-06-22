@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.text.Text?>
+
+<AnchorPane xmlns:fx="http://javafx.com/fxml" fx:controller="application.pileofballs.Controller.MenuController" prefWidth="600" prefHeight="400">
+    <Text text="Pile of Balls" layoutX="220" layoutY="80" style="-fx-font-size: 32px; -fx-font-weight: bold;" />
+    <Button fx:id="playButton" text="Play" layoutX="250" layoutY="150" prefWidth="100" onAction="#onPlayClicked" />
+    <Button fx:id="exitButton" text="Exit" layoutX="250" layoutY="200" prefWidth="100" onAction="#onExitClicked" />
+</AnchorPane>
