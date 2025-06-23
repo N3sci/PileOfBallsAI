@@ -26,6 +26,8 @@ public class GameController {
         currentGroup = new BallGroup(200, 95.02577388);
         gameCanvas.setFocusTraversable(true);
         gameCanvas.setOnKeyPressed(event -> {
+            if (currentGroup == null || !fallingBalls.isEmpty()) return;
+
             switch (event.getCode()) {
                 case UP -> currentGroup.rotate(true);
                 case LEFT -> currentGroup.moveLeft();
@@ -33,42 +35,39 @@ public class GameController {
                 case DOWN -> currentGroup.rotate(false);
             }
         });
-
         timer = new AnimationTimer() {
             public void handle(long now) {
                 gc.clearRect(0, 0, gameCanvas.getWidth(), gameCanvas.getHeight());
-                // Disegna il gruppo attivo
-                for (Ball b : currentGroup.getBalls()) {
-                    gc.setFill(b.getColor());
-                    gc.fillOval(b.getX() - 20, b.getY() - 20, 40, 40);
-                }
 
-                // Disegna le palline singole che cadono
-                for (Ball b : fallingBalls) {
-                    gc.setFill(b.getColor());
-                    gc.fillOval(b.getX() - 20, b.getY() - 20, 40, 40);
-                }
-                List<Ball> stoppedBalls = new ArrayList<>();
-                for (Ball b : fallingBalls) {
-                    if (BallPhysics.applyGravity(b, 1.73205081, staticBalls, fallingBalls)) {
-                        stoppedBalls.add(b);
+                if (currentGroup != null) {
+                    for (Ball b : currentGroup.getBalls()) {
+                        gc.setFill(b.getColor());
+                        gc.fillOval(b.getX() - 20, b.getY() - 20, 40, 40);
+                    }
+                    if (currentGroup.moveDown(1.73205081, staticBalls)) {
+                        Collections.addAll(fallingBalls, currentGroup.getBalls());
+                        currentGroup = null;
+                    }
+                } else if (fallingBalls.isEmpty()) {
+                    currentGroup = new BallGroup(200, 95.02577388);
+                } else {
+                    for (Ball b : fallingBalls) {
+                        if (BallPhysics.applyGravity(b, 1.73205081, staticBalls, fallingBalls)) {
+                            fallingBalls.remove(b);
+                            staticBalls.add(b);
+                        }
+                    }
+                    // Disegna le palline singole che cadono
+                    for (Ball b : fallingBalls) {
+                        gc.setFill(b.getColor());
+                        gc.fillOval(b.getX() - 20, b.getY() - 20, 40, 40);
                     }
                 }
-                fallingBalls.removeAll(stoppedBalls);
-                staticBalls.addAll(stoppedBalls);
-
-                boolean touchedBottom = currentGroup.moveDown(1, staticBalls);
-                if (touchedBottom) {
-                    Collections.addAll(fallingBalls, currentGroup.getBalls());
-                    currentGroup = new BallGroup(200, 95.02577388);
-                }
-
-
-
                 for (Ball b : staticBalls) {
                     gc.setFill(b.getColor());
                     gc.fillOval(b.getX() - 20, b.getY() - 20, 40, 40);
                 }
+
 
             }
         };
@@ -77,3 +76,15 @@ public class GameController {
 
 
 }
+
+
+
+
+
+
+
+
+
+
+
+

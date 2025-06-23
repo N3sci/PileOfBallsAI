@@ -5,6 +5,11 @@ import javafx.scene.paint.Color;
 
 public class BallGroup {
     private Ball[] balls = new Ball[3];
+
+    public boolean isCenterBallDown() {
+        return centerBallDown;
+    }
+
     private boolean centerBallDown;
     private double centerX, centerY;
     private double spacing = 20;
@@ -49,8 +54,7 @@ public class BallGroup {
     }
 
     public boolean moveDown(double speed, java.util.List<Ball> staticBalls) {
-        centerY += speed;
-        updatePositions();
+
         for (Ball b : balls) {
             if (b == null) continue;
             if (b.getY() >= 600 - spacing) {
@@ -59,11 +63,13 @@ public class BallGroup {
             for (Ball staticBall : staticBalls) {
                 double dx = staticBall.getX() - b.getX();
                 double dy = staticBall.getY() - (b.getY() + speed);
-                if (dx * dx + dy * dy < 1600) {
+                if (dx<40 && dy<40 && Math.sqrt(dx*dx+dy*dy)<40) {
                     return true;
                 }
             }
         }
+        centerY += speed;
+        updatePositions();
         return false;
     }
 

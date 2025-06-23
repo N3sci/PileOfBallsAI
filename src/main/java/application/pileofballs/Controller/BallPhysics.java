@@ -14,11 +14,11 @@ public class BallPhysics {
     public static boolean applyGravity(Ball b, double speed, List<Ball> staticBalls, List<Ball> fallingBalls) {
         double nextY = b.getY() + speed;
 
-        if (nextY >= CANVAS_HEIGHT - RADIUS) return true;
-
-        boolean blockCenter = false;
-        boolean blockLeft = false;
-        boolean blockRight = false;
+        // Controlla se ha raggiunto il fondo
+        if (nextY >= CANVAS_HEIGHT - RADIUS) {
+            b.setCenter(b.getX(), CANVAS_HEIGHT - RADIUS);
+            return true;
+        }
 
         for (Ball other : concat(staticBalls, fallingBalls)) {
             if (other == b) continue;
@@ -28,44 +28,31 @@ public class BallPhysics {
 
             double distance = Math.sqrt(dx * dx + dy * dy);
 
-            if (distance < 2 * RADIUS) {
-                if (Math.abs(dx) ==0) {
-                    if (!blockRight && b.getX() + X_OFFSET <= CANVAS_WIDTH - RADIUS) {
-                        b.setCenter(b.getX() + X_OFFSET, b.getY() + HEIGHT_STEP);
-                        return false;
-                    }
-                } else if (dx < 0) {
-                    blockLeft = true;
-                } else {
-                    blockRight = true;
+            if (distance <= 2 * RADIUS - 1) {
+                // collisione diretta sotto (stessa colonna)
+                if (Math.abs(dx) < 1) {
+                    b.setCenter(b.getX(), other.getY() - 2 * RADIUS);
+                    return true;
                 }
+
+                // Deviazione laterale
+                double newX;
+                if (dx > 0 && b.getX() - X_OFFSET >= RADIUS) {
+                    newX = b.getX() - X_OFFSET;
+                } else if (dx < 0 && b.getX() + X_OFFSET <= CANVAS_WIDTH - RADIUS) {
+                    newX = b.getX() + X_OFFSET;
+                } else {
+                    // Bloccato su entrambi i lati
+                    b.setCenter(b.getX(), other.getY() - 2 * RADIUS);
+                    return true;
+                }
+
+                b.setCenter(newX, b.getY() + HEIGHT_STEP);
+                return false;
             }
         }
 
-        // Se tocca il centro
-        if (blockCenter) {
-            if (!blockRight && b.getX() + X_OFFSET <= CANVAS_WIDTH - RADIUS) {
-                b.setCenter(b.getX() + X_OFFSET, b.getY() + HEIGHT_STEP);
-                return false;
-            } else if (!blockLeft && b.getX() - X_OFFSET >= RADIUS) {
-                b.setCenter(b.getX() - X_OFFSET, b.getY() + HEIGHT_STEP);
-                return false;
-            } else {
-                return true;
-            }
-        }
-
-        // Se bloccata lateralmente (uno solo)
-        if (blockLeft && !blockRight && b.getX() + X_OFFSET <= CANVAS_WIDTH - RADIUS) {
-            b.setCenter(b.getX() + X_OFFSET, b.getY() + HEIGHT_STEP);
-            return false;
-        }
-        if (blockRight && !blockLeft && b.getX() - X_OFFSET >= RADIUS) {
-            b.setCenter(b.getX() - X_OFFSET, b.getY() + HEIGHT_STEP);
-            return false;
-        }
-
-        // Altrimenti scende dritta
+        // Altrimenti scende normalmente
         b.setCenter(b.getX(), nextY);
         return false;
     }
