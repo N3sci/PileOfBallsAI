@@ -8,7 +8,6 @@ public class BallGroup {
     private boolean centerBallDown;
     private double centerX, centerY;
     private double spacing = 20;
-
     public BallGroup(double startX, double startY) {
         centerX = startX;
         centerY = startY;
@@ -38,7 +37,7 @@ public class BallGroup {
     }
 
     private void applyLayout() {
-        double offsetY = 34.64101615 * (centerBallDown ? -1 : 1);
+        double offsetY = 0.5*34.64101615 * (centerBallDown ? -1 : 1);
         if (balls[1] != null) balls[1].setCenter(centerX, centerY + offsetY);
         double sideY = centerY - offsetY;
         if (balls[0] != null) balls[0].setCenter(centerX - spacing, sideY);

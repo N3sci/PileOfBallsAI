@@ -5,7 +5,6 @@ import javafx.animation.AnimationTimer;
 import javafx.fxml.FXML;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.paint.Color;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -20,29 +19,9 @@ public class GameController {
     private BallGroup currentGroup;
     private AnimationTimer timer;
     private Vector<Ball> staticBalls = new Vector<>();
-    private Vector<Vector<Ball>> gridGame = new Vector<>();
     private List<Ball> fallingBalls = new ArrayList<>();
 
     public void initialize() {
-        double y = 6;
-        int x;
-        for (int i = 0; i < 17; i++) {
-            x=0;
-            Vector<Ball> row = new Vector<>();
-            for (int j = 0; j < 19; j++) {
-                Ball b = null;
-                if (i % 2 == 0 && j % 2 == 0) {
-                    b = new Ball(x, y, Color.BLUE);
-                } else if (i % 2 != 0 && j % 2 != 0) {
-                    b = new Ball(x, y, Color.RED);
-                }
-                row.add(b);
-                x+=20;
-            }
-            gridGame.add(row);
-            x=20;
-            y+=34.6;
-        }
         gc = gameCanvas.getGraphicsContext2D();
         currentGroup = new BallGroup(200, 95.02577388);
         gameCanvas.setFocusTraversable(true);
